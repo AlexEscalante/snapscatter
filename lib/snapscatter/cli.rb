@@ -27,13 +27,12 @@ module Snapscatter
       end
     end
 
-    desc 'purge', 'purge snapshots older than specified date'
+    desc 'purge', 'purge snapshots older than the specified number of days'
     method_option :keys, type: :hash, banner: 'AWS security keys'
-    method_option :date, type: :string, default: Date.today.strftime("%Y-%m-%d"), aliases: '-d', banner: 'date in yy-mm-dd format'
+    method_option :days, type: :numeric, default: 30, aliases: '-d', banner: 'retention policy in days'
     method_option :noaction, type: :boolean, default: false, aliases: '-n', banner: 'do not purge, just show'
     def purge
-      date = Date.strptime(options[:date], "%Y-%m-%d")
-      purged = Snapscatter.purge create_ec2, date, true # options[:noaction] # remove in production
+      purged = Snapscatter.purge create_ec2, options[:days], true # options[:noaction] # remove in production
       purged.each { |snapshot| puts "#{snapshot.id}" }
     end
 
@@ -50,12 +49,10 @@ module Snapscatter
         Snapscatter.in_lock volume.tags['Consistent'] do
           volume_name = volume.tags['Name']
           date_as_string = Date.today.strftime("%Y-%m-%d")
-          purge_after = Date.today.next_month.strftime("%Y-%m-%d")
           description = "#{volume_name} #{date_as_string}"
 
           snapshot = volume.create_snapshot description
           snapshot.add_tag 'VolumeName', value: volume_name
-          snapshot.add_tag 'PurgeAfter', value: purge_after
           snapshot.add_tag 'PurgeAllow', value: "true"
 
           sleep 1 until [:completed, :error].include?(snapshot.status)
