@@ -83,7 +83,7 @@ You have to make two calls because the script won't purge and create snapshots o
 
 ## TODO
 
-* Take consistency speficication out of the volume and put it in a configuration file
+* Take consistency specification out of the volume and put it in a configuration file
 * More database connectors
 
 ## Contributing
