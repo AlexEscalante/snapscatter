@@ -21,7 +21,6 @@ module Snapscatter
         if options[:full]
           output << snapshot.volume_id
           output << snapshot.start_time.strftime("%Y-%m-%d")
-          output << snapshot.tags['PurgeAfter']
         end
         puts output.join(" ")
       end
