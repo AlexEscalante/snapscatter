@@ -45,10 +45,10 @@ a snapshot not to be purged indefinitely, you can set this tag to any other valu
 ### Purging snapshots
 
 You can call the `purge` command to delete any snapshots older than 30 days. This is the default retention policy
-but you can change it by using the optional '-d' flag (for `--days).
+but you can change it by using the optional `-d` flag (for `--days).
 
-Snapshots will be deleted from your default AWS region, but you can optionally supply the '--alternate' flag
-to purge snapshots from another region.
+Snapshots will be deleted from your default AWS region. If you supply the `--alternate` flag, snapshots will also
+be purged from the alternate region.
 
 You can also run this command with the `-n` (for `--noaction`) to only list the snapshots that would be purged
 under the specified retention policy, no snapshot will be purged.
@@ -57,7 +57,7 @@ under the specified retention policy, no snapshot will be purged.
 
 The `list` command will show all the snapshots subject to be purged, that is, all snapshots with the `PurgAllow`
 tag set to `true`. The `-f` option for this command gives more information on every snapshot: snapshot id, volume id
-and date of creation.
+and date of creation. Using the `-r` or `--region` flag you can change the target region.
 
 ### Consistent backups
 

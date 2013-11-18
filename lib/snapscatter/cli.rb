@@ -21,8 +21,9 @@ module Snapscatter
     desc 'list', 'Show available snapshots'
     method_option :keys, type: :hash, banner: 'AWS security keys'
     method_option :full, type: :boolean, aliases: '-f', banner: 'Show useful info about snapshots'
+    method_option :region, type: :string, aliases: '-r', banner: 'Region to list snapshots from'
     def list
-      snapshots = Snapscatter.list create_ec2
+      snapshots = Snapscatter.list create_ec2(region: options[:region])
       snapshots.each do |snapshot|
         output = [ snapshot.id ]
         if options[:full]
