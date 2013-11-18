@@ -30,14 +30,20 @@ module Snapscatter
     method_option :keys, type: :hash, banner: 'AWS security keys'
     method_option :days, type: :numeric, default: 30, aliases: '-d', banner: 'retention policy in days'
     method_option :noaction, type: :boolean, default: false, aliases: '-n', banner: 'do not purge, just show'
+    method_option :alternate, type: :string, banner: 'alternate region to purge snapshots from'
     def purge
-      purged = Snapscatter.purge create_ec2, options[:days], true # options[:noaction] # remove in production
+      purged = Snapscatter.purge create_ec2, options[:days], options[:noaction]
       purged.each { |snapshot| puts "#{snapshot.id}" }
+
+      if options.has_key? 'alternate'
+        purged = Snapscatter.purge create_ec2(region: options[:alternate]), options[:days], options[:noaction]
+        purged.each { |snapshot| puts "#{snapshot.id}" }
+      end
     end
 
-    desc 'create', 'Create snapshots, optionally copying them to destination region'
+    desc 'create', 'Create snapshots, optionally copying them to an alternate region'
     method_option :keys, type: :hash, banner: 'AWS security keys'
-    method_option :destination, type: :string, banner: 'region to copy snapshots to'
+    method_option :alternate, type: :string, banner: 'region to copy snapshots to'
     def create
       source_ec2 = create_ec2
       targets = Snapscatter.targets source_ec2
@@ -59,10 +65,10 @@ module Snapscatter
 
         if snapshot.status == :completed
           output = ["created", snapshot.id, description]
-          if options.has_key? 'destination'
-            destination_ec2 = create_ec2(region: options[:destination])
-            Snapscatter.copy destination_ec2, source_ec2.client.config.region, snapshot, description
-            output << "#{options[:destination]}"
+          if options.has_key? 'alternate'
+            alternate_ec2 = create_ec2(region: options[:alternate])
+            Snapscatter.copy alternate_ec2, source_ec2.client.config.region, snapshot, description
+            output << "#{options[:alternate]}"
           end
           puts output.join(" ")
         else

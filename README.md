@@ -18,7 +18,7 @@ Just use the gem command to install:
 You can have a look at the commands and options by just typing the name of the executable:
 
     Commands:
-      snapscatter create          # Create snapshots, optionally copying them to destination region
+      snapscatter create          # Create snapshots, optionally copying them to an alternate region
       snapscatter help [COMMAND]  # Describe available commands or one specific command
       snapscatter list            # Show available snapshots
       snapscatter purge           # purge snapshots older than the specified number of days
@@ -35,7 +35,7 @@ value of `true`. You can then check the list of these volumes using the command 
 ### Taking snapshots
 
 Use the command `create` to take snapshots of all the tagged volumes. Snapshots will be taken to your default
-AWS region, but you can optionally supply the '--destination' flag to create a copy onto another
+AWS region, but you can optionally supply the '--alternate' flag to create a copy onto another
 region for disaster recovery.
 
 Every snapshot taken will have the `PurgeAllow` tag set with the value of `true`. If for some reason you want
@@ -47,13 +47,16 @@ a snapshot not to be purged indefinitely, you can set this tag to any other valu
 You can call the `purge` command to delete any snapshots older than 30 days. This is the default retention policy
 but you can change it by using the optional '-d' flag (for `--days).
 
+Snapshots will be deleted from your default AWS region, but you can optionally supply the '--alternate' flag
+to purge snapshots from another region.
+
 You can also run this command with the `-n` (for `--noaction`) to only list the snapshots that would be purged
 under the specified retention policy, no snapshot will be purged.
 
 ### Listing snapshots
 
 The `list` command will show all the snapshots subject to be purged, that is, all snapshots with the `PurgAllow`
-tag set to `true`. The `-f`option for this command gives more information on every snapshot: snapshot id, volume id
+tag set to `true`. The `-f` option for this command gives more information on every snapshot: snapshot id, volume id
 and date of creation.
 
 ### Consistent backups
@@ -77,7 +80,7 @@ Create a shell file like the following and put it under cron's control:
     export AWS_SECRET_ACCESS_KEY="YOURSECRETACCESSKEY"
 
     snapscatter purge -d 20
-    snapscatter create --destination="us-west-1"
+    snapscatter create --alternate="us-west-1"
 
 You have to make two calls because the script won't purge and create snapshots on a single call.
 
