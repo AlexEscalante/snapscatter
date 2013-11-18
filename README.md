@@ -17,12 +17,13 @@ Just use the gem command to install:
 
 You can have a look at the commands and options by just typing the name of the executable:
 
-    Commands:
+    Snapscatter commands:
       snapscatter create          # Create snapshots, optionally copying them to an alternate region
       snapscatter help [COMMAND]  # Describe available commands or one specific command
       snapscatter list            # Show available snapshots
       snapscatter purge           # purge snapshots older than the specified number of days
       snapscatter targets         # Show volumes tagged for backup
+      snapscatter version         # Shows current version of the program
 
 The best way to use this script is to make a shell wrapper for it that exports your AWS credentials
 as environment variables and then put it under the control of the cron demon.
@@ -35,7 +36,7 @@ value of `true`. You can then check the list of these volumes using the command 
 ### Taking snapshots
 
 Use the command `create` to take snapshots of all the tagged volumes. Snapshots will be taken to your default
-AWS region, but you can optionally supply the '--alternate' flag to create a copy onto another
+AWS region, but you can optionally supply the `--alternate` flag to create a copy onto another
 region for disaster recovery.
 
 Every snapshot taken will have the `PurgeAllow` tag set with the value of `true`. If for some reason you want
@@ -45,7 +46,7 @@ a snapshot not to be purged indefinitely, you can set this tag to any other valu
 ### Purging snapshots
 
 You can call the `purge` command to delete any snapshots older than 30 days. This is the default retention policy
-but you can change it by using the optional `-d` flag (for `--days).
+but you can change it by using the optional `-d` flag (for `--days`).
 
 Snapshots will be deleted from your default AWS region. If you supply the `--alternate` flag, snapshots will also
 be purged from the alternate region.
