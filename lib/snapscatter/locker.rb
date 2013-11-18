@@ -48,12 +48,12 @@ module Snapscatter
 
     def lock
       @client.lock!
-      puts "locked mongo instance at #{@host}"
+      say "locked mongo instance at #{@host}"
     end
 
     def unlock
       @client.unlock!
-      puts "unlocked mongo instance at #{@host}"
+      say "unlocked mongo instance at #{@host}"
     end
   end
 

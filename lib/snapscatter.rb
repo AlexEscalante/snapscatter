@@ -43,7 +43,7 @@ module Snapscatter
     snapshots = Snapscatter.list ec2
     snapshots.each do |snapshot|
       purge_date = snapshot.start_time.to_date + purge_after_days
-      # puts "#{Date.today} > #{purge_date} == #{Date.today > purge_date}"
+      # say "#{Date.today} > #{purge_date} == #{Date.today > purge_date}"
       if Date.today > purge_date
         snapshot.delete if not list_only
         purged << snapshot

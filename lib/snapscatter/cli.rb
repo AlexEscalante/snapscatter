@@ -3,12 +3,19 @@ require_relative '../snapscatter'
 
 module Snapscatter
   class CLI < Thor
+    package_name "Snapscatter"
+    map "-v" => :version
+
+    desc 'version', 'Shows current version of the program'
+    def version
+      say "Snapscatter #{Snapscatter::VERSION}"
+    end
 
     desc 'targets', 'Show volumes tagged for backup'
     method_option :keys, type: :hash, banner: 'AWS security keys'
     def targets
       targets = Snapscatter.targets create_ec2
-      targets.each { |target| puts target.id }
+      targets.each { |target| say target.id }
     end
 
     desc 'list', 'Show available snapshots'
@@ -22,7 +29,7 @@ module Snapscatter
           output << snapshot.volume_id
           output << snapshot.start_time.strftime("%Y-%m-%d")
         end
-        puts output.join(" ")
+        say output.join(" ")
       end
     end
 
@@ -33,11 +40,11 @@ module Snapscatter
     method_option :alternate, type: :string, banner: 'alternate region to purge snapshots from'
     def purge
       purged = Snapscatter.purge create_ec2, options[:days], options[:noaction]
-      purged.each { |snapshot| puts "#{snapshot.id}" }
+      purged.each { |snapshot| say "#{snapshot.id}" }
 
       if options.has_key? 'alternate'
         purged = Snapscatter.purge create_ec2(region: options[:alternate]), options[:days], options[:noaction]
-        purged.each { |snapshot| puts "#{snapshot.id}" }
+        purged.each { |snapshot| say "#{snapshot.id}" }
       end
     end
 
@@ -70,9 +77,9 @@ module Snapscatter
             Snapscatter.copy alternate_ec2, source_ec2.client.config.region, snapshot, description
             output << "#{options[:alternate]}"
           end
-          puts output.join(" ")
+          say output.join(" ")
         else
-          puts "#{volume.id} (#{volume_name}): snapshot failed"
+          say "#{volume.id} (#{volume_name}): snapshot failed"
         end
       end
     end
